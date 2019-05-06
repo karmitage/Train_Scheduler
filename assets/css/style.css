@@ -1,9 +1,8 @@
 
 .jumbotron
 ,.card-header
-,#search {
+,.btn-primary {
     background-color: cornflowerblue;
     font: black;
     font-family: Arial, Helvetica, sans-serif;
-
 }
