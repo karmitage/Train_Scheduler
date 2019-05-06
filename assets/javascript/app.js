@@ -13,4 +13,13 @@ $(document).ready(function () {
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
 
+    // Create a variable to reference the database.
+    var database = firebase.database();
+
+    // Capture inputs and store them into variables
+    var name = '';
+    var destination = '';
+    var time = '';
+    var frequency = 0;
+
 });
