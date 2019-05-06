@@ -56,4 +56,52 @@ $(document).ready(function () {
 
     });
 
+    // Firebase watcher .on("child_added"
+    database.ref().on("child_added", function (snapshot) {
+        // storing the snapshot.val() in a variable for convenience
+        var sv = snapshot.val();
+
+        // Console.logging data
+        console.log(sv.name);
+        console.log(sv.destination);
+        console.log(sv.time);
+        console.log(sv.frequency);
+
+        //initialize variables for calculated display values
+        var nextArrival = '';
+        var minutesAway = 0;
+
+
+        //populate HTML elements
+        var row = $("<tr>");
+        var rowHeader = $("<th scope='row'>");
+        row.append(rowHeader);
+
+        rowHeader.text(sv.name);
+
+        var col1 = $("<td id='destination'>");
+        var col2 = $("<td id='frequency'>");
+        var col3 = $("<td id='next-arrival'>");
+        var col4 = $("<td id='minutes-away'>");
+
+
+        rowHeader.text(sv.name);
+        col1.text(sv.destination);
+        col2.text(sv.frequency);
+        col3.text(nextArrival);
+        col4.text(minutesAway);
+
+
+        row.append(col1);
+        row.append(col2);
+        row.append(col3);
+        row.append(col4);
+
+        $("#displayResults").append(row);
+
+        // Handle the errors
+    }, function (errorObject) {
+        console.log("Errors handled: " + errorObject.code);
+    });
+
 });
