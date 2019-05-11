@@ -12,7 +12,7 @@ $(document).ready(function () {
 
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-    console.log('HI');
+
 
     // Create a variable to reference the database.
     var database = firebase.database();
@@ -22,7 +22,7 @@ $(document).ready(function () {
     var destination = '';
     var time = '';
     var frequency = 0;
-    var timeFormat = 'HHmm' //specifies formatting for military time
+    var timeFormat = 'HH:mm' //specifies formatting for military time
 
     $("#addTrain").on("click", function (event) {
         // prevent page from refreshing when form tries to submit itself
@@ -35,19 +35,13 @@ $(document).ready(function () {
         frequency = $("#frequency").val().trim();
 
 
-        // Console log each of the user inputs to confirm we are receiving them
-        console.log("input name is: " + name);
-        console.log("input destination is: " + destination);
-        console.log("input time is: " + time);
-        console.log("input frequency is: " + frequency);
-
         //this captures the "time" field input (which is a string) & stores it in 
         //the format specified by the "timeFormat" variable and displays it in that format
         //if we wanted, we could store it in one format and display it in another. but we're not going to do that.
         time = moment(time, timeFormat).format(timeFormat);
 
 
-        // push data to our db
+        // push data to db
         database.ref().push({
             name: name,
             destination: destination,
@@ -63,19 +57,20 @@ $(document).ready(function () {
         // storing the snapshot.val() in a variable for convenience
         var sv = snapshot.val();
 
-        // Console.logging data
-        console.log("database value for name is: " + sv.name);
-        console.log("database value for destination is: " + sv.destination);
-        console.log("database value for time is: " + sv.time);
-        console.log("database value for frequency is: " + sv.frequency);
-
         //initialize variables for calculated display values
-        var nextArrival = '';
+        var nextArrival = moment();
         var minutesAway = 0;
-        var currentTime = moment().format();
 
-        console.log("current time is: " + currentTime);
-
+        //determine minutes away and arrival time
+        var firstTimeConverted = moment(sv.time, "HH:mm").subtract(1, "years");
+        var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+        // Time apart (remainder)
+        var remainder = diffTime % sv.frequency;
+        // Minutes Until Train
+        minutesAway = sv.frequency - remainder;
+        // Next Train
+        nextArrival = moment().add(minutesAway, "minutes");
+        nextArrival = moment(nextArrival).format(timeFormat);
 
         //populate HTML elements
         var row = $("<tr>");
@@ -89,13 +84,11 @@ $(document).ready(function () {
         var col3 = $("<td id='next-arrival'>");
         var col4 = $("<td id='minutes-away'>");
 
-
         rowHeader.text(sv.name);
         col1.text(sv.destination);
         col2.text(sv.frequency);
         col3.text(nextArrival);
         col4.text(minutesAway);
-
 
         row.append(col1);
         row.append(col2);
